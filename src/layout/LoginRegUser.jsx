@@ -41,8 +41,6 @@ function LoginRegUser() {
 
       alert("Login Successful!");
 
-      // Save user data in localStorage
-      // localStorage.setItem("user", JSON.stringify(response));
       localStorage.setItem("userId", response.id);
       localStorage.setItem("role", response.role);
 

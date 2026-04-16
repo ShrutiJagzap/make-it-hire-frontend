@@ -28,13 +28,8 @@ function Job1() {
       const data = await res.json(); // Assuming backend returns plain text. Use `await res.json()` if it's JSON
 
       if (res.ok) {
-        // setStatus("success");
         alert("Resume uploaded successfully!");
         window.location.href = "/user-dashboard";
-        // console.log("Server response:", data);
-        // if(data.resume_score){
-        //   alert("AI Resume Score:" + data.resume_score + "%");
-        // }
         if(data.parsedJson) {
           const parsed = JSON.parse(data.parsedJson);
           alert("AI Resume Score:" + parsed.resume_score + "%");

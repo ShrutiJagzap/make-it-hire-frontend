@@ -43,23 +43,6 @@ function Footer() {
             ))}
           </div>
         </div>
-        {/* <div className="bg-gray-100 dark:bg-gray-800">
-          <div className="container  py-6 mx-auto flex items-center sm:flex-row flex-col">
-            <a className="flex title-font font-medium items-center 
-            md:justify-start justify-center text-gray-900 dark:text-white">
-              
-              <span className="ml-3 text-xl">Make It Hire</span>
-            </a>
-            
-            <span className="inline-flex sm:ml-auto sm:mt-0 mt-4 justify-center sm:justify-start">
-              {['facebook', 'twitter', 'instagram', 'linkedin'].map((platform, index) => (
-                <a key={index} className="ml-3 text-gray-500 hover:text-indigo-500">
-                  <i className={`fab fa-${platform} fa-lg`}></i>
-                </a>
-              ))}
-            </span>
-          </div>
-        </div> */}
       </footer>
     </div>
   );

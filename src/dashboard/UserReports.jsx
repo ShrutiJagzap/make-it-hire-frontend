@@ -1,4 +1,3 @@
-// src/dashboard/UserReports.jsx
 import React, { useState, useEffect } from 'react';
 import {
   Box,
@@ -60,120 +59,118 @@ const UserReports = ({ userId, userName }) => {
         return <Assessment sx={{ color: '#9ca3af' }} />;
     }
   };
+  if (loading) {
+    return <LinearProgress />;
+  }
 
-  return (
-    <Box>
-      <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3 }}>
-        My Interview Reports
-      </Typography>
+  if (reports.length === 0) {
+    return (
+      <Card sx={{ p: 6, textAlign: 'center', borderRadius: 3 }}>
+        <Assessment sx={{ fontSize: 64, color: '#9ca3af', mb: 2 }} />
+        <Typography variant="h6" color="textSecondary">
+          No Interview Reports Yet
+        </Typography>
+        <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+          Complete a video interview to see your AI-generated report here.
+        </Typography>
+      </Card>
+    );
+  }
 
-      {loading ? (
-        <LinearProgress />
-      ) : reports.length === 0 ? (
-        <Card sx={{ p: 6, textAlign: 'center' }}>
-          <Assessment sx={{ fontSize: 64, color: '#9ca3af', mb: 2 }} />
-          <Typography variant="h6" color="textSecondary">
-            No Interview Reports Yet
-          </Typography>
-          <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-            Complete a video interview to see your AI-generated report here.
-          </Typography>
-        </Card>
-      ) : (
-        <Grid container spacing={3}>
-          {reports.map((report, index) => (
-            <Grid item xs={12} key={index}>
-              <Card sx={{ 
-                borderRadius: 2, 
-                boxShadow: 2,
-                transition: 'transform 0.2s',
-                '&:hover': { transform: 'translateY(-4px)', boxShadow: 4 }
-              }}>
-                <CardContent>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                    <Box>
-                      <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                        {report.job_title}
-                      </Typography>
-                      <Typography variant="caption" color="textSecondary">
-                        {new Date(report.date).toLocaleString()}
-                      </Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      {getVerdictIcon(report.verdict)}
-                      <Chip 
-                        label={report.verdict} 
-                        color={report.verdict === 'STRONG HIRE' ? 'success' : 
-                               report.verdict === 'HIRE' ? 'info' : 
-                               report.verdict === 'CONSIDER' ? 'warning' : 'error'}
-                        size="small"
-                      />
-                    </Box>
-                  </Box>
+   return (
+    <Grid container spacing={3}>
+      {reports.map((report, index) => (
+        <Grid item xs={12} key={index}>
+          <Card sx={{ 
+            borderRadius: 3, 
+            boxShadow: 2,
+            transition: 'transform 0.2s',
+            '&:hover': { transform: 'translateY(-4px)', boxShadow: 4 }
+          }}>
+            <CardContent>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                <Box>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                    {report.job_title || 'Technical Interview'}
+                  </Typography>
+                  <Typography variant="caption" color="textSecondary">
+                    {new Date(report.date).toLocaleString()}
+                  </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  {getVerdictIcon(report.verdict)}
+                  <Chip 
+                    label={report.verdict} 
+                    color={report.verdict === 'STRONG HIRE' ? 'success' : 
+                           report.verdict === 'HIRE' ? 'info' : 
+                           report.verdict === 'CONSIDER' ? 'warning' : 'error'}
+                    size="small"
+                  />
+                </Box>
+              </Box>
 
-                  <Box sx={{ display: 'flex', gap: 3, mb: 3 }}>
-                    <Box>
-                      <Typography variant="h4" sx={{ color: '#6366f1', fontWeight: 'bold' }}>
-                        {report.overall_score}%
-                      </Typography>
-                      <Typography variant="caption">Overall Score</Typography>
-                    </Box>
-                    <Box>
-                      <Typography variant="h4" sx={{ color: '#22c55e', fontWeight: 'bold' }}>
-                        {report.technical_score}%
-                      </Typography>
-                      <Typography variant="caption">Technical Score</Typography>
-                    </Box>
-                  </Box>
+              <Box sx={{ display: 'flex', gap: 3, mb: 3 }}>
+                <Box>
+                  <Typography variant="h4" sx={{ color: '#6366f1', fontWeight: 'bold' }}>
+                    {report.overall_score}%
+                  </Typography>
+                  <Typography variant="caption">Overall Score</Typography>
+                </Box>
+                <Box>
+                  <Typography variant="h4" sx={{ color: '#22c55e', fontWeight: 'bold' }}>
+                    {report.technical_score}%
+                  </Typography>
+                  <Typography variant="caption">Technical Score</Typography>
+                </Box>
+              </Box>
 
-                  <Accordion sx={{ mb: 2 }}>
-                    <AccordionSummary expandIcon={<ExpandMore />}>
-                      <Typography variant="subtitle2">View Detailed Analysis</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      <Typography variant="body2" sx={{ mb: 2 }}>
-                        {report.overall_assessment}
-                      </Typography>
-                      
-                      <Divider sx={{ my: 2 }} />
-                      
-                      <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1, color: '#22c55e' }}>
-                        Strengths
-                      </Typography>
-                      <ul style={{ margin: '0 0 16px 0', paddingLeft: 20 }}>
-                        {report.strengths?.slice(0, 3).map((s, i) => (
-                          <li key={i}>
-                            <Typography variant="body2">{s}</Typography>
-                          </li>
-                        ))}
-                      </ul>
-                      
-                      <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1, color: '#ef4444' }}>
-                        Areas to Improve
-                      </Typography>
-                      <ul style={{ margin: 0, paddingLeft: 20 }}>
-                        {report.areas_for_improvement?.slice(0, 3).map((a, i) => (
-                          <li key={i}>
-                            <Typography variant="body2">{a}</Typography>
-                          </li>
-                        ))}
-                      </ul>
-                    </AccordionDetails>
-                  </Accordion>
+              <Accordion sx={{ mb: 2 }}>
+                <AccordionSummary expandIcon={<ExpandMore />}>
+                  <Typography variant="subtitle2">View Detailed Analysis</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Typography variant="body2" sx={{ mb: 2 }}>
+                    {report.overall_assessment}
+                  </Typography>
+                  
+                  <Divider sx={{ my: 2 }} />
+                  
+                  <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1, color: '#22c55e' }}>
+                    Strengths
+                  </Typography>
+                  <ul style={{ margin: '0 0 16px 0', paddingLeft: 20 }}>
+                    {report.strengths?.slice(0, 3).map((s, i) => (
+                      <li key={i}>
+                        <Typography variant="body2">{s}</Typography>
+                      </li>
+                    ))}
+                  </ul>
+                  
+                  <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1, color: '#ef4444' }}>
+                    Areas to Improve
+                  </Typography>
+                  <ul style={{ margin: 0, paddingLeft: 20 }}>
+                    {report.areas_for_improvement?.slice(0, 3).map((a, i) => (
+                      <li key={i}>
+                        <Typography variant="body2">{a}</Typography>
+                      </li>
+                    ))}
+                  </ul>
+                </AccordionDetails>
+              </Accordion>
 
-                  <Button 
-                    variant="outlined" 
-                    fullWidth
-                    onClick={() => handleViewReport(report)}
-                  >
-                    View Full Report
-                  </Button>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
+              <Button 
+                variant="outlined" 
+                fullWidth
+                onClick={() => handleViewReport(report)}
+                sx={{ borderRadius: 2 }}
+              >
+                View Full Report
+              </Button>
+            </CardContent>
+          </Card>
         </Grid>
-      )}
+      ))}
 
       {/* Full Report Dialog */}
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="md" fullWidth>
@@ -202,7 +199,7 @@ const UserReports = ({ userId, userName }) => {
                 </Grid>
 
                 <Grid item xs={12}>
-                  <Card sx={{ p: 3 }}>
+                  <Card sx={{ p: 3, bgcolor: '#f8fafc' }}>
                     <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 2 }}>
                       AI Assessment
                     </Typography>
@@ -282,7 +279,7 @@ const UserReports = ({ userId, userName }) => {
           </>
         )}
       </Dialog>
-    </Box>
+    </Grid>
   );
 };
 

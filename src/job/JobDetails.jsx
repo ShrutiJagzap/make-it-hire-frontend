@@ -48,9 +48,6 @@ function JobDetails() {
       setUploading(true);
       setStatus("");
       
-      // console.log("Uploading file:", file.name);
-      // console.log("User ID:", userId);
-      
       const formData = new FormData();
       formData.append("file", file);
       formData.append("userId", userId);
@@ -59,11 +56,8 @@ function JobDetails() {
         method: "POST",
         body: formData,
       });
-
-      // console.log("Response status:", response.status);
       
       const data = await response.json();
-      // console.log("Response data:", data);
 
       if (!response.ok) {
         throw new Error(data.message || "Upload failed");
@@ -74,7 +68,6 @@ function JobDetails() {
       if (typeof aiData === 'string') {
         try {
           aiData = JSON.parse(aiData);
-          // console.log("Parsed AI data:", aiData);
         } catch (e) {
           console.log("AI data is not JSON:", aiData);
         }

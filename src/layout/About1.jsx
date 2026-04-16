@@ -1,11 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Router } from "react-router-dom";
-
-
-
-
-
 const About1 = () => {
   return (
     <div className="bg-gray-50 min-h-screen text-gray-800">

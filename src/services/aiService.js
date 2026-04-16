@@ -1,6 +1,3 @@
-
-
-// src/services/aiService.js
 const API_BASE = "http://localhost:8081/api";
 const AI_SERVICE_URL = "http://localhost:8000";
 

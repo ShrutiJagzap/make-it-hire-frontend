@@ -36,7 +36,6 @@ function Navbar() {
           name: data.fullName || 'User',
           email: data.email || '',
           phone: data.phone || '',
-          email: data.email || '',
           photoUrl: data.photoUrl ? `http://localhost:8081/api/auth/profile/image/${data.photoUrl}` : null
         });
       } catch (err) {

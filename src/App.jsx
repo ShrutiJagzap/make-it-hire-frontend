@@ -51,6 +51,8 @@ function App() {
         <Route path="/job2" element={<Job2 />} />
         <Route path="/jobs" element={<Jobs/>}/>
         <Route path="/job/:id" element={<JobDetails/>}/>
+        <Route path="/about1" element={<About1 />} />
+        <Route path="/about" element={<About1 />} />
 
         <Route
           path="/admin-dashboard"
