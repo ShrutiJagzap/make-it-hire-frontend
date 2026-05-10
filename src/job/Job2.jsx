@@ -1,3 +1,4 @@
+import API_CONFIG from '../config/apiConfig';
 import React, { useRef } from 'react';
 
 function Job2() {
@@ -15,7 +16,7 @@ function Job2() {
     const formData = new FormData();
     formData.append("file", file);
     const res = fetch(
-      "http://localhost:8081/api/resumes/upload",
+      `${API_CONFIG.backend}/api/resumes/upload`,
       {
         method: "POST",
         body: formData

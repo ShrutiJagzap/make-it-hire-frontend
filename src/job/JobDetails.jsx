@@ -1,4 +1,4 @@
-
+import API_CONFIG from '../config/apiConfig';
 import React, { useRef, useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import VideoInterview from "../components/VideoInterview";
@@ -24,7 +24,7 @@ function JobDetails() {
   const [sessionId, setSessionId] = useState(null);
 
   useEffect(() => {
-    fetch(`http://localhost:8081/api/jobs/${id}`)
+    fetch(`${API_CONFIG.backend}/api/jobs/${id}`)
       .then((res) => res.json())
       .then((data) => setJob(data))
       .catch((err) => console.error(err));
@@ -52,7 +52,7 @@ function JobDetails() {
       formData.append("file", file);
       formData.append("userId", userId);
 
-      const response = await fetch("http://localhost:8081/api/resumes/upload", {
+      const response = await fetch(`${API_CONFIG.backend}/api/resumes/upload`, {
         method: "POST",
         body: formData,
       });

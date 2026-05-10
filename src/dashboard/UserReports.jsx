@@ -1,3 +1,4 @@
+import API_CONFIG from '../config/apiConfig';
 import React, { useState, useEffect } from 'react';
 import {
   Box,
@@ -19,6 +20,7 @@ import {
   Divider
 } from '@mui/material';
 import { ExpandMore, Assessment, CheckCircle, Warning } from '@mui/icons-material';
+import API_CONFIG from '../config/apiConfig';
 
 const UserReports = ({ userId, userName }) => {
   const [reports, setReports] = useState([]);
@@ -33,7 +35,7 @@ const UserReports = ({ userId, userName }) => {
   const fetchUserReports = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:8000/reports/${encodeURIComponent(userName || 'Candidate')}`);
+      const response = await fetch(`${API_CONFIG.ai}/reports/${encodeURIComponent(userName || 'Candidate')}`);
       const data = await response.json();
       setReports(data);
     } catch (error) {

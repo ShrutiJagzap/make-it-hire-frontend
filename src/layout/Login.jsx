@@ -1,3 +1,4 @@
+import API_CONFIG from '../config/apiConfig';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -63,7 +64,7 @@ function Login() {
                 formData.append("role", selectedRole);
                 formData.append("idPhoto", idPhoto);
 
-                const response = await fetch("http://localhost:8081/api/auth/register-with-photo", {
+                const response = await fetch(`${API_CONFIG.backend}/api/auth/register-with-photo`, {
                     method: "POST",
                     body: formData
                 });

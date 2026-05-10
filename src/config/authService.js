@@ -1,5 +1,6 @@
+import API_CONFIG from './apiConfig'
 
-const BASE_URL = "http://localhost:8081/api/auth";
+const BASE_URL = `${ API_CONFIG.backend}/api/auth`;
 
 export const registerUser = async (userData) => {
   const res = await fetch(`${BASE_URL}/register`, {

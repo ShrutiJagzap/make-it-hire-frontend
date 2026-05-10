@@ -1,5 +1,6 @@
-const API_BASE = "http://localhost:8081/api";
-const AI_SERVICE_URL = "http://localhost:8000";
+import API_CONFIG from './apiConfig'
+const API_BASE = `${API_CONFIG.backend}/api`;
+const AI_SERVICE_URL = API_CONFIG.ai;
 
 export const analyzeResume = async (file, userId) => {
   const formData = new FormData();

@@ -1,3 +1,4 @@
+import API_CONFIG from '../config/apiConfig';
 import React, { useState, useEffect } from 'react';
 import {
   Box,
@@ -37,7 +38,7 @@ const AdminReports = () => {
   const fetchReports = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/reports/all');
+      const response = await fetch(`${API_CONFIG.al}/reports/all`);
       const data = await response.json();
       setReports(data);
     } catch (error) {
@@ -49,7 +50,7 @@ const AdminReports = () => {
 
   const handleViewReport = async (reportId) => {
     try {
-      const response = await fetch(`http://localhost:8000/report/${reportId}`);
+      const response = await fetch(`${API_CONFIG.al}/report/${reportId}`);
       const report = await response.json();
       setSelectedReport(report);
       setOpenDialog(true);

@@ -1,3 +1,4 @@
+import API_CONFIG from '../config/apiConfig'
 import React, { useRef, useState } from "react";
 
 function Job1() {
@@ -20,7 +21,7 @@ function Job1() {
       setUploading(true);
       // setStatus("");
 
-      const res = await fetch("http://localhost:8081/api/resumes/upload", {
+      const res = await fetch(`${API_CONFIG.backend}/api/resumes/upload`, {
         method: "POST",
         body: formData,
       });

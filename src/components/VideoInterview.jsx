@@ -1,3 +1,4 @@
+import API_CONFIG from '../config/apiConfig';
 import React, { useState, useRef, useEffect } from 'react';
 import {
   Box,
@@ -26,6 +27,7 @@ import {
   VolumeUp
 } from '@mui/icons-material';
 import Webcam from 'react-webcam';
+import API_CONFIG from '../config/apiConfig';
 
 const VideoInterview = ({ open, onClose, resumeData, sessionId, userId }) => {
   const [step, setStep] = useState('verification');
@@ -100,7 +102,7 @@ const VideoInterview = ({ open, onClose, resumeData, sessionId, userId }) => {
       formData.append('image', imageSrc);
       formData.append('user_id', userId_local);
       
-      const response = await fetch('http://localhost:8000/verify-identity', {
+      const response = await fetch(`${API_CONFIG.ai}/verify-identity`, {
         method: 'POST',
         body: formData
       });
@@ -131,7 +133,7 @@ const VideoInterview = ({ open, onClose, resumeData, sessionId, userId }) => {
       backendFormData.append('userId', userId_local);
       backendFormData.append('file', file);
       
-      const backendResponse = await fetch('http://localhost:8081/api/auth/upload-id-photo', {
+      const backendResponse = await fetch(`${API_CONFIG.backend}/api/auth/upload-id-photo`, {
         method: 'POST',
         body: backendFormData
       });
@@ -142,7 +144,7 @@ const VideoInterview = ({ open, onClose, resumeData, sessionId, userId }) => {
       aiFormData.append('user_id', userId_local);
       aiFormData.append('file', file);
       
-      const aiResponse = await fetch('http://localhost:8000/upload-id-photo', {
+      const aiResponse = await fetch(`${API_CONFIG.ai}/upload-id-photo`, {
         method: 'POST',
         body: aiFormData
       });
@@ -201,7 +203,7 @@ const VideoInterview = ({ open, onClose, resumeData, sessionId, userId }) => {
       formData.append('job_description', jobDescription);
       formData.append('resume_skills', skills);
       
-      const response = await fetch('http://localhost:8000/generate-questions', {
+      const response = await fetch(`${API_CONFIG.ai}/generate-questions`, {
         method: 'POST',
         body: formData
       });
@@ -300,7 +302,7 @@ const VideoInterview = ({ open, onClose, resumeData, sessionId, userId }) => {
       formData.append('audio', audioBlob, 'recording.webm');
       formData.append('session_id', sessionId);
       
-      const response = await fetch('http://localhost:8000/speech-to-text', {
+      const response = await fetch(`${API_CONFIG.ai}/speech-to-text`, {
         method: 'POST',
         body: formData
       });
@@ -373,7 +375,7 @@ const VideoInterview = ({ open, onClose, resumeData, sessionId, userId }) => {
       formData.append('answer', answerText);
       formData.append('question_index', currentQuestion);
     
-      const response = await fetch('http://localhost:8000/evaluate-answer', {
+      const response = await fetch(`${API_CONFIG.ai}/evaluate-answer`, {
         method: 'POST',
         body: formData
       });
@@ -457,7 +459,7 @@ const VideoInterview = ({ open, onClose, resumeData, sessionId, userId }) => {
       formData.append('session_id', sessionId);
       formData.append('candidate_name', candidateName);
       
-      const response = await fetch('http://localhost:8000/generate-report', {
+      const response = await fetch(`${API_CONFIG.ai}/generate-report`, {
         method: 'POST',
         body: formData
       });

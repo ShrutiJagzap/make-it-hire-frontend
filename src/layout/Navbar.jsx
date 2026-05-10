@@ -1,4 +1,4 @@
-
+import API_CONFIG from '../config/apiConfig';
 import React, { useState, useEffect, useRef } from 'react';
 import { Moon, Sun, Bell, LogOut, ChevronDown, User as UserIcon, Settings, Edit3, FileText } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -36,7 +36,7 @@ function Navbar() {
           name: data.fullName || 'User',
           email: data.email || '',
           phone: data.phone || '',
-          photoUrl: data.photoUrl ? `http://localhost:8081/api/auth/profile/image/${data.photoUrl}` : null
+          photoUrl: data.photoUrl ? `${API_CONFIG.backend}/api/auth/profile/image/${data.photoUrl}` : null
         });
       } catch (err) {
         console.error("Error fetching navbar profile:", err);
@@ -55,7 +55,7 @@ function Navbar() {
         setUserData({
           name: data.fullName || 'User',
           email: data.email || '',
-          photoUrl: data.photoUrl ? `http://localhost:8081/api/auth/profile/image/${data.photoUrl}` : null
+          photoUrl: data.photoUrl ? `${API_CONFIG.backend}/api/auth/profile/image/${data.photoUrl}` : null
         });
       }).catch(err => console.error("Error fetching navbar profile:", err));
     }

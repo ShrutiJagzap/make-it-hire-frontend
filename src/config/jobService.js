@@ -1,4 +1,5 @@
-const API = "http://localhost:8081/api/jobs";
+import API_CONFIG from './apiConfig'
+const API = `${API_CONFIG.backend}/api/jobs`;
 
 export const createJob = async(job)=>{
 

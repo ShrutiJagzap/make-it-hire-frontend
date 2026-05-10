@@ -1,3 +1,4 @@
+import API_CONFIG from '../config/apiConfig';
 import React, { useState, useEffect } from 'react';
 import { fetchUserProfile } from "../config/authService";
 import UserReports from './UserReports';
@@ -61,18 +62,18 @@ const UserDashboard = () => {
           email: userProfile.email,
           phone: userProfile.phone || "",
           photo: userProfile.photoUrl
-            ? `http://localhost:8081/api/auth/profile/image/${userProfile.photoUrl}`
+            ? `${API_CONFIG.backend}/api/auth/profile/image/${userProfile.photoUrl}`
             : null
         });
 
         // Fetch resumes
-        const resumesRes = await fetch(`http://localhost:8081/api/resumes/user/${userId}`);
+        const resumesRes = await fetch(`${API_CONFIG.backend}/api/resumes/user/${userId}`);
         const resumesData = await resumesRes.json();
         setResumeData(resumesData);
 
         // Fetch reports using user name
         if (userProfile.fullName) {
-          const reportsRes = await fetch(`http://localhost:8000/reports/${encodeURIComponent(userProfile.fullName)}`);
+          const reportsRes = await fetch(`${API_CONFIG.ai}/reports/${encodeURIComponent(userProfile.fullName)}`);
           const reportsData = await reportsRes.json();
           setReports(reportsData);
         }

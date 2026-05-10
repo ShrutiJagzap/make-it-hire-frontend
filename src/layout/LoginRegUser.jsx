@@ -13,7 +13,7 @@ function LoginRegUser() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // ✅ REGISTER USER
+  // REGISTER USER
   const handleRegister = async () => {
     try {
       const message = await registerUser({
@@ -31,7 +31,7 @@ function LoginRegUser() {
     }
   };
 
-  // ✅ LOGIN USER
+  // LOGIN USER
   const handleLogin = async () => {
     try {
       const response = await loginUser({

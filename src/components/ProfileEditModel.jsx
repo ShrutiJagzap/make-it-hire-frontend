@@ -1,3 +1,4 @@
+import API_CONFIG from '../config/apiConfig';
 import React, { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -82,7 +83,7 @@ const ProfileEditModal = ({ open, onClose, userData, onUpdate }) => {
       const userId = localStorage.getItem('userId');
       
       // Update profile information
-      const updateResponse = await fetch(`http://localhost:8081/api/auth/profile/${userId}`, {
+      const updateResponse = await fetch(`${API_CONFIG.backend}/api/auth/profile/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -105,7 +106,7 @@ const ProfileEditModal = ({ open, onClose, userData, onUpdate }) => {
         const imageFormData = new FormData();
         imageFormData.append('file', profileImage);
         
-        const imageResponse = await fetch(`http://localhost:8081/api/auth/profile/upload/${userId}`, {
+        const imageResponse = await fetch(`${API_CONFIG.backend}/api/auth/profile/upload/${userId}`, {
           method: 'POST',
           body: imageFormData
         });
@@ -115,7 +116,7 @@ const ProfileEditModal = ({ open, onClose, userData, onUpdate }) => {
         }
         
         const imageData = await imageResponse.json();
-        setProfileImagePreview(`http://localhost:8081/api/auth/profile/image/${imageData.photoUrl}`);
+        setProfileImagePreview(`${API_CONFIG.backend}/api/auth/profile/image/${imageData.photoUrl}`);
       }
       
       setSuccess('Profile updated successfully!');
