@@ -1,4 +1,4 @@
-import API_CONFIG from './apiConfig'
+import API_CONFIG from '../config/apiConfig'
 const API_BASE = `${API_CONFIG.backend}/api`;
 const AI_SERVICE_URL = API_CONFIG.ai;
 

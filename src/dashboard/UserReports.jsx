@@ -20,7 +20,6 @@ import {
   Divider
 } from '@mui/material';
 import { ExpandMore, Assessment, CheckCircle, Warning } from '@mui/icons-material';
-import API_CONFIG from '../config/apiConfig';
 
 const UserReports = ({ userId, userName }) => {
   const [reports, setReports] = useState([]);

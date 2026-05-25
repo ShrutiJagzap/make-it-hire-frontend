@@ -38,7 +38,7 @@ const AdminReports = () => {
   const fetchReports = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${API_CONFIG.al}/reports/all`);
+      const response = await fetch(`${API_CONFIG.ai}/reports/all`);
       const data = await response.json();
       setReports(data);
     } catch (error) {
@@ -50,7 +50,7 @@ const AdminReports = () => {
 
   const handleViewReport = async (reportId) => {
     try {
-      const response = await fetch(`${API_CONFIG.al}/report/${reportId}`);
+      const response = await fetch(`${API_CONFIG.ai}/report/${reportId}`);
       const report = await response.json();
       setSelectedReport(report);
       setOpenDialog(true);

@@ -27,7 +27,6 @@ import {
   VolumeUp
 } from '@mui/icons-material';
 import Webcam from 'react-webcam';
-import API_CONFIG from '../config/apiConfig';
 
 const VideoInterview = ({ open, onClose, resumeData, sessionId, userId }) => {
   const [step, setStep] = useState('verification');
