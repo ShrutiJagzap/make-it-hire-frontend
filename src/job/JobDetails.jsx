@@ -93,9 +93,75 @@ function JobDetails() {
     }
   };
 
+  const formatSkillsText = (skillsText) => {
+  if (!skillsText) return "No specific skills listed";
+  
+  // Define categories and their patterns
+  const categories = [
+    { name: "Front-End", pattern: /Front-End:?\s*/i },
+    { name: "Front-End Framework", pattern: /Front-End Framework:?\s*/i },
+    { name: "Back-End", pattern: /Back-End:?\s*/i },
+    { name: "Databases", pattern: /Databases:?\s*/i },
+    { name: "APIs", pattern: /APIs:?\s*/i },
+    { name: "Version Control", pattern: /Version Control:?\s*/i }
+  ];
+  
+  let remainingText = skillsText;
+  const sections = [];
+  
+  for (let i = 0; i < categories.length; i++) {
+    const category = categories[i];
+    const nextCategory = categories[i + 1];
+    
+    const startMatch = remainingText.match(category.pattern);
+    if (startMatch) {
+      let content = remainingText.substring(startMatch.index + startMatch[0].length);
+      
+      if (nextCategory) {
+        const endMatch = content.match(nextCategory.pattern);
+        if (endMatch) {
+          content = content.substring(0, endMatch.index);
+        }
+      }
+      
+      sections.push({
+        category: category.name,
+        content: content.trim()
+      });
+    }
+  }
+  
+  // If no categories found, display as plain text
+  if (sections.length === 0) {
+    return (
+      <div className="bg-white p-5 rounded-lg shadow-md">
+        <p className="text-gray-700 whitespace-normal break-words">
+          {skillsText}
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white p-5 rounded-lg shadow-md">
+      {sections.map((section, idx) => (
+        <div key={idx} className="mb-4 last:mb-0">
+          <h3 className="font-bold text-indigo-700 text-lg mb-2">
+            {section.category}:
+          </h3>
+          <p className="text-gray-700 leading-relaxed ml-4 whitespace-normal break-words">
+            {section.content}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+};
+
   if (!job) {
     return <div className="p-20 text-center">Loading Job...</div>;
   }
+
 
   return (
     <div>
@@ -132,7 +198,7 @@ function JobDetails() {
                   {job.description}
                 </p>
 
-                <div className="mb-6">
+                {/* <div className="mb-6">
                   <span className="font-bold">Required Skills:</span>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {job.skills?.split(',').map((skill, index) => (
@@ -141,6 +207,24 @@ function JobDetails() {
                       </span>
                     ))}
                   </div>
+                </div> */}
+
+                {/* <div className="mb-6">
+                  <p className="text-xl font-bold mb-3">🎯 Required Skills:</p>
+                  <div className="bg-white p-5 rounded-lg shadow-md max-w-full overflow-x-auto">
+                    {job.skills ? (
+                      <div className="text-gray-700 whitespace-normal break-words">
+                        {formatSkillsText(job.skills)}
+                      </div>
+                    ) : (
+                      <p className="text-gray-600 italic">No specific skills listed</p>
+                    )}
+                  </div>
+                </div> */}
+                
+                <div className="mb-6">
+                  <p className="text-xl font-bold mb-3">🎯 Required Skills:</p>
+                  {formatSkillsText(job.skills)}
                 </div>
 
                 <div className='flex justify-between items-center mt-8'>
