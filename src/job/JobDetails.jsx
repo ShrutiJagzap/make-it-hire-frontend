@@ -82,11 +82,12 @@ function JobDetails() {
           recommendations: ["AI parsing did not return details. Using default baseline analysis."],
           word_count: 0,
           score_breakdown: {
-            contact_info: 10,
-            education: 15,
-            experience: 10,
-            skills: 10,
-            formatting_length: 10
+            contact_info: 5,
+            education: 8,
+            experience: 11,
+            skills: 14,
+            projects: 8,
+            formatting_length: 9
           },
           warning: "Fallback: AI service result was unparseable."
         };
@@ -97,11 +98,12 @@ function JobDetails() {
         aiData.resume_score = 50;
         if (!aiData.score_breakdown) {
           aiData.score_breakdown = {
-            contact_info: 10,
-            education: 10,
+            contact_info: 5,
+            education: 8,
             experience: 10,
-            skills: 10,
-            formatting_length: 10
+            skills: 12,
+            projects: 8,
+            formatting_length: 7
           };
         }
         aiData.warning = aiData.warning || "Fallback: score was invalid or missing from analysis.";
@@ -110,16 +112,18 @@ function JobDetails() {
       // Ensure breakdown exists and is complete
       if (!aiData.score_breakdown) {
         const score = aiData.resume_score || 50;
-        const c = Math.round(score * 0.20);
-        const ed = Math.round(score * 0.25);
+        const c = Math.round(score * 0.10);
+        const ed = Math.round(score * 0.15);
         const ex = Math.round(score * 0.20);
-        const sk = Math.round(score * 0.20);
-        const f = score - (c + ed + ex + sk);
+        const sk = Math.round(score * 0.25);
+        const p = Math.round(score * 0.15);
+        const f = score - (c + ed + ex + sk + p);
         aiData.score_breakdown = {
           contact_info: c,
           education: ed,
           experience: ex,
           skills: sk,
+          projects: p,
           formatting_length: f
         };
       }
@@ -347,16 +351,30 @@ function JobDetails() {
                               📊 Evaluation breakdown
                             </h3>
                             <div className="space-y-3">
-                              {/* Contact Info (out of 20) */}
+                              {/* Skills (out of 25) */}
                               <div>
                                 <div className="flex justify-between text-xs font-medium text-gray-600 mb-1">
-                                  <span>Contact Information</span>
-                                  <span>{aiResult.score_breakdown.contact_info} / 20</span>
+                                  <span>Key Skills Match</span>
+                                  <span>{aiResult.score_breakdown.skills || 0} / 25</span>
                                 </div>
                                 <div className="w-full bg-gray-200 rounded-full h-1.5">
                                   <div 
-                                    className="bg-blue-500 h-1.5 rounded-full transition-all duration-500" 
-                                    style={{ width: `${(aiResult.score_breakdown.contact_info / 20) * 100}%` }}
+                                    className="bg-green-500 h-1.5 rounded-full transition-all duration-500" 
+                                    style={{ width: `${((aiResult.score_breakdown.skills || 0) / 25) * 100}%` }}
+                                  ></div>
+                                </div>
+                              </div>
+
+                              {/* Experience (out of 20) */}
+                              <div>
+                                <div className="flex justify-between text-xs font-medium text-gray-600 mb-1">
+                                  <span>Professional Experience</span>
+                                  <span>{aiResult.score_breakdown.experience || 0} / 20</span>
+                                </div>
+                                <div className="w-full bg-gray-200 rounded-full h-1.5">
+                                  <div 
+                                    className="bg-purple-500 h-1.5 rounded-full transition-all duration-500" 
+                                    style={{ width: `${((aiResult.score_breakdown.experience || 0) / 20) * 100}%` }}
                                   ></div>
                                 </div>
                               </div>
@@ -365,54 +383,54 @@ function JobDetails() {
                               <div>
                                 <div className="flex justify-between text-xs font-medium text-gray-600 mb-1">
                                   <span>Education Credentials</span>
-                                  <span>{aiResult.score_breakdown.education} / 15</span>
+                                  <span>{aiResult.score_breakdown.education || 0} / 15</span>
                                 </div>
                                 <div className="w-full bg-gray-200 rounded-full h-1.5">
                                   <div 
                                     className="bg-indigo-500 h-1.5 rounded-full transition-all duration-500" 
-                                    style={{ width: `${(aiResult.score_breakdown.education / 15) * 100}%` }}
+                                    style={{ width: `${((aiResult.score_breakdown.education || 0) / 15) * 100}%` }}
                                   ></div>
                                 </div>
                               </div>
 
-                              {/* Experience (out of 15) */}
+                              {/* Projects (out of 15) */}
                               <div>
                                 <div className="flex justify-between text-xs font-medium text-gray-600 mb-1">
-                                  <span>Professional Experience</span>
-                                  <span>{aiResult.score_breakdown.experience} / 15</span>
+                                  <span>Project Quality</span>
+                                  <span>{aiResult.score_breakdown.projects || 0} / 15</span>
                                 </div>
                                 <div className="w-full bg-gray-200 rounded-full h-1.5">
                                   <div 
-                                    className="bg-purple-500 h-1.5 rounded-full transition-all duration-500" 
-                                    style={{ width: `${(aiResult.score_breakdown.experience / 15) * 100}%` }}
+                                    className="bg-pink-500 h-1.5 rounded-full transition-all duration-500" 
+                                    style={{ width: `${((aiResult.score_breakdown.projects || 0) / 15) * 100}%` }}
                                   ></div>
                                 </div>
                               </div>
 
-                              {/* Skills (out of 20) */}
+                              {/* Content Quality / Formatting Length (out of 15) */}
                               <div>
                                 <div className="flex justify-between text-xs font-medium text-gray-600 mb-1">
-                                  <span>Key Skills Match</span>
-                                  <span>{aiResult.score_breakdown.skills} / 20</span>
-                                </div>
-                                <div className="w-full bg-gray-200 rounded-full h-1.5">
-                                  <div 
-                                    className="bg-green-500 h-1.5 rounded-full transition-all duration-500" 
-                                    style={{ width: `${(aiResult.score_breakdown.skills / 20) * 100}%` }}
-                                  ></div>
-                                </div>
-                              </div>
-
-                              {/* Formatting Length (out of 30) */}
-                              <div>
-                                <div className="flex justify-between text-xs font-medium text-gray-600 mb-1">
-                                  <span>Resume Structure & Length</span>
-                                  <span>{aiResult.score_breakdown.formatting_length} / 30</span>
+                                  <span>Content Quality & Formatting</span>
+                                  <span>{aiResult.score_breakdown.formatting_length || 0} / 15</span>
                                 </div>
                                 <div className="w-full bg-gray-200 rounded-full h-1.5">
                                   <div 
                                     className="bg-amber-500 h-1.5 rounded-full transition-all duration-500" 
-                                    style={{ width: `${(aiResult.score_breakdown.formatting_length / 30) * 100}%` }}
+                                    style={{ width: `${((aiResult.score_breakdown.formatting_length || 0) / 15) * 100}%` }}
+                                  ></div>
+                                </div>
+                              </div>
+
+                              {/* Contact Info (out of 10) */}
+                              <div>
+                                <div className="flex justify-between text-xs font-medium text-gray-600 mb-1">
+                                  <span>Contact Information</span>
+                                  <span>{aiResult.score_breakdown.contact_info || 0} / 10</span>
+                                </div>
+                                <div className="w-full bg-gray-200 rounded-full h-1.5">
+                                  <div 
+                                    className="bg-blue-500 h-1.5 rounded-full transition-all duration-500" 
+                                    style={{ width: `${((aiResult.score_breakdown.contact_info || 0) / 10) * 100}%` }}
                                   ></div>
                                 </div>
                               </div>
