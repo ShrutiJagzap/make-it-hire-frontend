@@ -80,9 +80,7 @@ function JobDetails() {
       setAiResult(aiData);
       setShowAIDetails(true);
       setStatus("success");
-      
-      const score = aiData?.resume_score || 'N/A';
-      alert(`Resume uploaded successfully! Score: ${score}%`);
+      // Done - UI handles success state and displays analysis modal
       
     } catch (error) {
       console.error("Upload error:", error);
