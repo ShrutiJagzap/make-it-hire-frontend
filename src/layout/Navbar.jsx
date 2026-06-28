@@ -149,9 +149,17 @@ function Navbar() {
                       {/* Top Section */}
                       <div className="px-6 py-6 flex flex-col items-center border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
                         {userData.photoUrl ? (
-                          <img src={userData.photoUrl} alt="Profile" className="w-20 h-20 rounded-full object-cover shadow-md mb-3 border-4 border-white dark:border-gray-700" />
+                          <img 
+                            src={userData.photoUrl} 
+                            alt="Profile" 
+                            className="w-20 h-20 rounded-full object-cover shadow-md mb-3 border-4 border-white dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity" 
+                            onClick={handleEditProfile}
+                          />
                         ) : (
-                          <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-3xl shadow-md mb-3 border-4 border-white dark:border-gray-700">
+                          <div 
+                            className="w-20 h-20 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-3xl shadow-md mb-3 border-4 border-white dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
+                            onClick={handleEditProfile}
+                          >
                             {userData.name ? userData.name.charAt(0).toUpperCase() : (role === "ADMIN" ? 'H' : 'U')}
                           </div>
                         )}
@@ -212,8 +220,7 @@ function Navbar() {
                           className="flex items-center justify-center w-full px-4 py-2.5 text-sm font-bold text-red-600 dark:text-red-400 bg-white dark:bg-gray-900 border border-red-100 dark:border-red-900/30 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 shadow-sm transition-all cursor-pointer"
                           onClick={() => {
                             localStorage.clear();
-                            navigate("/login");
-                            window.location.reload();
+                            window.location.href = "/";
                           }}
                         >
                           <LogOut size={16} className="mr-2" />

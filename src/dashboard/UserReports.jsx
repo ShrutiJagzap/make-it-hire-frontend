@@ -28,8 +28,10 @@ const UserReports = ({ userId, userName }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchUserReports();
-  }, [userId]);
+    if (userName) {
+      fetchUserReports();
+    }
+  }, [userId, userName]);
 
   const fetchUserReports = async () => {
     setLoading(true);

@@ -37,7 +37,7 @@ const ProfileEditModal = ({ open, onClose, userData, onUpdate }) => {
         phone: userData.phone || '',
         title: userData.title || ''
       });
-      setProfileImagePreview(userData.photo || '');
+      setProfileImagePreview(userData.photo || userData.photoUrl || '');
     }
   }, [userData]);
 

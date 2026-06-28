@@ -54,8 +54,12 @@ const UserDashboard = () => {
     const fetchAllData = async () => {
       setLoading(true);
       try {
-        // Fetch user profile
-        const userProfile = await fetchUserProfile(userId);
+        // Fetch user profile and resumes in parallel
+        const [userProfile, resumesRes] = await Promise.all([
+          fetchUserProfile(userId),
+          fetch(`${API_CONFIG.backend}/api/resumes/user/${userId}`)
+        ]);
+
         setUserData({
           name: userProfile.fullName,
           title: userProfile.title || "Job Seeker",
@@ -66,8 +70,6 @@ const UserDashboard = () => {
             : null
         });
 
-        // Fetch resumes
-        const resumesRes = await fetch(`${API_CONFIG.backend}/api/resumes/user/${userId}`);
         const resumesData = await resumesRes.json();
         setResumeData(resumesData);
 
