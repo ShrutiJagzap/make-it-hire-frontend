@@ -1,6 +1,6 @@
 import API_CONFIG from  "../config/apiConfig";
 import React, { useState, useEffect, useRef } from 'react';
-import { Moon, Sun, Bell, LogOut, ChevronDown, User as UserIcon, Settings, Edit3, FileText } from 'lucide-react';
+import { Moon, Sun, Bell, LogOut, ChevronDown, User as UserIcon, Settings, Edit3, FileText, Briefcase, Clock, MessageSquare, Sparkles } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { fetchUserProfile } from "../config/authService";
 import ProfileEditModal from '../components/ProfileEditModel';
@@ -10,6 +10,16 @@ function Navbar() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const dropdownRef = useRef(null);
+
+  // Notifications states
+  const [notifications, setNotifications] = useState([]);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const notificationsDropdownRef = useRef(null);
+
+  // Profile image error states (for fallback initials display)
+  const [imageError, setImageError] = useState(false);
+  const [dropdownImageError, setDropdownImageError] = useState(false);
 
   const [darkMode, setDarkMode] = useState(
     localStorage.getItem('theme') === 'dark' ||
@@ -48,18 +58,114 @@ function Navbar() {
     fetchUserData();
   }, [isLoggedIn, userId]);
 
+  useEffect(() => {
+    setImageError(false);
+    setDropdownImageError(false);
+  }, [userData.photoUrl]);
+
+  // Notifications fetching
+  const fetchNotifications = async () => {
+    if (isLoggedIn && userId) {
+      try {
+        const res = await fetch(`${API_CONFIG.backend}/api/notifications/user/${userId}`);
+        if (res.ok) {
+          const data = await res.json();
+          setNotifications(data);
+          setUnreadCount(data.filter(n => !n.read).length);
+        }
+      } catch (err) {
+        console.error("Error fetching notifications:", err);
+      }
+    }
+  };
 
   useEffect(() => {
-    if (isLoggedIn && userId) {
-      fetchUserProfile(userId).then(data => {
-        setUserData({
-          name: data.fullName || 'User',
-          email: data.email || '',
-          photoUrl: data.photoUrl ? `${API_CONFIG.backend}/api/auth/profile/image/${data.photoUrl}` : null
-        });
-      }).catch(err => console.error("Error fetching navbar profile:", err));
-    }
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 15000); // Poll every 15s
+    return () => clearInterval(interval);
   }, [isLoggedIn, userId]);
+
+  const handleMarkAsRead = async (notif) => {
+    if (!notif.read) {
+      try {
+        const res = await fetch(`${API_CONFIG.backend}/api/notifications/${notif.id}/read`, {
+          method: 'PUT'
+        });
+        if (res.ok) {
+          setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, read: true } : n));
+          setUnreadCount(c => Math.max(0, c - 1));
+        }
+      } catch (err) {
+        console.error("Failed to mark as read:", err);
+      }
+    }
+    setIsNotificationsOpen(false);
+    if (notif.targetUrl) {
+      navigate(notif.targetUrl);
+    }
+  };
+
+  const handleMarkAllAsRead = async () => {
+    try {
+      const res = await fetch(`${API_CONFIG.backend}/api/notifications/user/${userId}/read-all`, {
+        method: 'PUT'
+      });
+      if (res.ok) {
+        setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+        setUnreadCount(0);
+      }
+    } catch (err) {
+      console.error("Failed to mark all as read:", err);
+    }
+  };
+
+  const getNotificationIcon = (type) => {
+    const iconClass = "w-8 h-8 rounded-full flex items-center justify-center";
+    switch (type) {
+      case 'APPLICATION':
+        return (
+          <div className={`${iconClass} bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-450`}>
+            <Briefcase size={14} />
+          </div>
+        );
+      case 'INTERVIEW':
+        return (
+          <div className={`${iconClass} bg-green-50 text-green-600 dark:bg-green-950/30 dark:text-green-450`}>
+            <Clock size={14} />
+          </div>
+        );
+      case 'FEEDBACK':
+        return (
+          <div className={`${iconClass} bg-amber-50 text-amber-600 dark:bg-amber-950/30 dark:text-amber-450`}>
+            <MessageSquare size={14} />
+          </div>
+        );
+      case 'SYSTEM':
+      default:
+        return (
+          <div className={`${iconClass} bg-purple-50 text-purple-600 dark:bg-purple-950/30 dark:text-purple-450`}>
+            <Sparkles size={14} />
+          </div>
+        );
+    }
+  };
+
+  const formatNotifTime = (dateStr) => {
+    if (!dateStr) return '';
+    try {
+      const d = new Date(dateStr);
+      const now = new Date();
+      const diffMs = now - d;
+      const diffMins = Math.floor(diffMs / 60000);
+      if (diffMins < 1) return 'Just now';
+      if (diffMins < 60) return `${diffMins}m ago`;
+      const diffHours = Math.floor(diffMins / 60);
+      if (diffHours < 24) return `${diffHours}h ago`;
+      return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    } catch (e) {
+      return '';
+    }
+  };
 
   useEffect(() => {
     if (darkMode) {
@@ -71,11 +177,14 @@ function Navbar() {
     }
   }, [darkMode]);
 
-  // Close dropdown when clicked outside
+  // Close dropdowns when clicked outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsProfileOpen(false);
+      }
+      if (notificationsDropdownRef.current && !notificationsDropdownRef.current.contains(event.target)) {
+        setIsNotificationsOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -119,13 +228,76 @@ function Navbar() {
             {isLoggedIn ? (
               <div className="flex items-center gap-5">
                 {/* Notification Icon */}
-                <button className={`relative transition-colors ${darkMode ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-900'}`}>
-                  <Bell size={22} />
-                  <span className="absolute top-0 right-0 transform translate-x-1/3 -translate-y-1/3 flex h-3 w-3">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 border-2 border-white dark:border-gray-950 bg-red-500"></span>
-                  </span>
-                </button>
+                <div className="relative" ref={notificationsDropdownRef}>
+                  <button 
+                    onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+                    className={`relative transition-colors p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer focus:outline-none ${darkMode ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-900'}`}
+                  >
+                    <Bell size={22} />
+                    {unreadCount > 0 && (
+                      <span className="absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white border-2 border-white dark:border-gray-950">
+                        {unreadCount}
+                      </span>
+                    )}
+                  </button>
+
+                  {/* Notifications Dropdown */}
+                  {isNotificationsOpen && (
+                    <div className="absolute right-0 mt-3 w-96 bg-white dark:bg-gray-800 rounded-3xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] overflow-hidden border border-gray-105 dark:border-gray-700 animate-fade-in-down origin-top-right z-50">
+                      {/* Header */}
+                      <div className="px-5 py-4 flex justify-between items-center border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
+                        <h3 className="font-bold text-gray-950 dark:text-white tracking-tight">Notifications</h3>
+                        {unreadCount > 0 && (
+                          <button 
+                            onClick={handleMarkAllAsRead}
+                            className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer bg-transparent border-none"
+                          >
+                            Mark all as read
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Notification List */}
+                      <div className="max-h-[360px] overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700/50">
+                        {notifications.length > 0 ? (
+                          notifications.map((notif) => (
+                            <div 
+                              key={notif.id}
+                              onClick={() => handleMarkAsRead(notif)}
+                              className={`flex gap-4 p-4 hover:bg-gray-50 dark:hover:bg-gray-750 cursor-pointer transition-colors ${!notif.read ? 'bg-indigo-50/20 dark:bg-indigo-950/10' : ''}`}
+                            >
+                              <div className="flex-shrink-0">
+                                {getNotificationIcon(notif.type)}
+                              </div>
+                              <div className="flex-grow min-w-0">
+                                <div className="flex justify-between items-start gap-2 mb-1">
+                                  <h4 className={`text-xs font-bold truncate ${!notif.read ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-400'}`}>
+                                    {notif.title}
+                                  </h4>
+                                  <span className="text-[10px] text-gray-405 whitespace-nowrap">
+                                    {formatNotifTime(notif.createdAt)}
+                                  </span>
+                                </div>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2">
+                                  {notif.message}
+                                </p>
+                              </div>
+                              {!notif.read && (
+                                <div className="flex-shrink-0 self-center w-2 h-2 rounded-full bg-indigo-600 dark:bg-indigo-400" />
+                              )}
+                            </div>
+                          ))
+                        ) : (
+                          <div className="py-12 flex flex-col items-center justify-center text-center px-4">
+                            <Bell className="w-10 h-10 text-gray-400 mb-3 stroke-[1.5]" />
+                            <p className="text-sm font-semibold text-gray-600 dark:text-gray-400">All caught up!</p>
+                            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">No new notifications at this time.</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
 
                 {/* Profile Dropdown */}
                 <div className="relative" ref={dropdownRef}>
@@ -133,8 +305,13 @@ function Navbar() {
                     onClick={() => setIsProfileOpen(!isProfileOpen)}
                     className="flex items-center focus:outline-none p-1 rounded-full border border-transparent hover:border-gray-200 dark:hover:border-gray-700 transition-all cursor-pointer"
                   >
-                    {userData.photoUrl ? (
-                      <img src={userData.photoUrl} alt="Profile" className="w-9 h-9 rounded-full object-cover border border-gray-200 dark:border-gray-700" />
+                    {userData.photoUrl && !imageError ? (
+                      <img 
+                        src={userData.photoUrl} 
+                        alt="Profile" 
+                        className="w-9 h-9 rounded-full object-cover border border-gray-200 dark:border-gray-700" 
+                        onError={() => setImageError(true)}
+                      />
                     ) : (
                       <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-sm shadow-sm border border-transparent">
                         {userData.name ? userData.name.charAt(0).toUpperCase() : (role === "ADMIN" ? 'H' : 'U')}
@@ -148,12 +325,13 @@ function Navbar() {
 
                       {/* Top Section */}
                       <div className="px-6 py-6 flex flex-col items-center border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
-                        {userData.photoUrl ? (
+                        {userData.photoUrl && !dropdownImageError ? (
                           <img 
                             src={userData.photoUrl} 
                             alt="Profile" 
                             className="w-20 h-20 rounded-full object-cover shadow-md mb-3 border-4 border-white dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity" 
                             onClick={handleEditProfile}
+                            onError={() => setDropdownImageError(true)}
                           />
                         ) : (
                           <div 
