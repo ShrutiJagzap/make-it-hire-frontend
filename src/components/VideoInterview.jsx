@@ -466,6 +466,30 @@ const VideoInterview = ({ open, onClose, resumeData, sessionId, userId }) => {
       const data = await response.json();
       setAnalysisResult(data);
       setStep('completed');
+
+      // Trigger backend notification for candidate and admin
+      try {
+        const userId_local = localStorage.getItem("userId");
+        const jobTitle = localStorage.getItem("currentJobTitle") || (resumeData?.job_title) || "Software Developer";
+        
+        await fetch(`${API_CONFIG.backend}/api/resumes/interview/complete`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            userId: userId_local,
+            sessionId: sessionId,
+            overallScore: data.overall_score || 0,
+            jobTitle: jobTitle,
+            candidateName: candidateName
+          })
+        });
+        console.log("✅ Interview completion notified to backend");
+      } catch (err) {
+        console.error("⚠️ Failed to notify backend of interview completion:", err);
+      }
+
     } catch (error) {
       console.error('Error generating report:', error);
       alert('Interview completed but report generation failed.');
